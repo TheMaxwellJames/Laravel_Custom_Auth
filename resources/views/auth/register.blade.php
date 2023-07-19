@@ -13,7 +13,7 @@
                     <h2 class='fw-bold text-secondary'>Register</h2>
                 </div>
                 <div class="card-body p-5">
-                    <form action="" method="POST" id="register_form">
+                    <form action="/register" method="POST" id="register_form">
                         @csrf
 
                         <div class="mb-3">
@@ -62,5 +62,23 @@
 
 
 @section('script')
+
+<script>
+    $(function(){
+        $("#register_form").submit(function(e){
+            e.preventDefault();
+            $("#register_btn").val('Please Wait');
+            $.ajax({
+                url: '{{ route ('auth.register') }}',
+                method: 'post',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(res){
+                    console.log(res);
+                }
+            });
+        });
+    });
+</script>
 
 @endsection
