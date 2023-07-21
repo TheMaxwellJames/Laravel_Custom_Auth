@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,7 +16,10 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::get('/', [UserController::class, 'index']);
+
+
+
+Route::post('/login', [UserController::class, 'loginUser'])->name('auth.login');
 
 Route::get('/register', [UserController::class, 'register']);
 
@@ -25,3 +30,18 @@ Route::post('/register', [UserController::class, 'saveUser'])->name('auth.regist
 Route::get('/forgot', [UserController::class, 'forgot']);
 
 Route::get('/reset', [UserController::class, 'reset']);
+
+
+
+
+
+
+
+
+Route::group(['middleware' => ['LoginCheck']], function()
+{
+    Route::get('/', [UserController::class, 'index']);
+
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::get('/logout', [UserController::class, 'logout'])->name('auth.logout');
+});
