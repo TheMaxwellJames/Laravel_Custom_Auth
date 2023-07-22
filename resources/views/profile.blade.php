@@ -13,9 +13,16 @@
                         <a href="{{ route('auth.logout') }}" class="btn btn-dark">Logout</a>
                     </div>
                     <div class="card-body p-5">
+                        <div id="profile_alert">
+
+                        </div>
                             <div class="row">
                                 <div class="col-lg-4 px-5 text-center" style="border-right: 1px solid black">
-                                    <img src="{{ asset('img/profile.jpg') }}" alt="" id="image_preview" class="img-fluid rounded-circle img-thumbnail" width="200">
+                                    @if ($userInfo->picture)
+                                    <img src="storage/images/{{ $userInfo->picture }}" alt="" id="image_preview" class="img-fluid rounded-circle img-thumbnail" width="200">
+                                        @else
+                                        <img src="{{ asset('img/profile.jpg') }}" alt="" id="image_preview" class="img-fluid rounded-circle img-thumbnail" width="200">
+                                    @endif
                                     <div>
                                         <label for="picture">Change Profile Picture</label>
                                         <input type="file" name="picture" id="picture" class="form-control rounded-pill">
@@ -91,13 +98,40 @@
                 cache: false,
                 processData: false,
                 contentType: false,
-                //dataType: 'json',
+                dataType: 'json',
                 success:function(response)
                 {
-                    console.log(response);
+                    if(response.status == 200)
+                    {
+                        $('#profile_alert').html(showMessage('success', response.messages));
+                        $("#picture").val();
+                    }
                 }
             });
         });
+
+        $("#profile_form").submit(function(e)
+        {
+            e.preventDefault();
+            let id = $('#user_id').val();
+            $("#profile_btn").val('Updating...');
+            $.ajax({
+                url: '{{route('profile.update')}}',
+                method: 'post',
+                data: $(this).serialize() + `&id=${id}`,
+                  dataType: 'json',
+                success: function(response)
+                {
+                   if(response.status == 200)
+                   {
+                    $("#profile_alert").html(showMessage('success', response.messages));
+                    $("#profile_btn").val('Update Profile');
+                   }
+                }
+            });
+
+        });
+
     });
 </script>
 

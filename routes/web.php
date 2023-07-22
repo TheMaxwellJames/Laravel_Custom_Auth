@@ -45,4 +45,5 @@ Route::group(['middleware' => ['LoginCheck']], function()
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::get('/logout', [UserController::class, 'logout'])->name('auth.logout');
     Route::post('/profile-image', [UserController::class, 'profileImageUpdate'])->name('profile.image');
+    Route::post('/profile-update', [UserController::class, 'profileUpdate'])->name('profile.update');
 });

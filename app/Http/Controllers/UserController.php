@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Storage;
+
+
 
 
 class UserController extends Controller
@@ -124,10 +127,49 @@ class UserController extends Controller
 
     public function profileImageUpdate(Request $request)
     {
-        print_r($_FILES);
-        print_r($_POST);
+       $user_id = $request->user_id;
+
+       $user = User::find($user_id);
+
+       if ($request->hasFile('picture'))
+       {
+        $file = $request->file('picture');
+        $fileName = time(). '.'.$file->getClientOriginalExtension();
+        $file->storeAs('public/images/', $fileName);
+
+        if($user->picture)
+        {
+            Storage::delete('public/images/' .$user->picture);
+
+        }
+
+       }
+       User::where('id', $user_id)->update([
+            'picture' => $fileName
+       ]);
+       return response()->json([
+            'status' => 200,
+            'messages' => 'profile Image Updated'
+       ]);
     }
 
+
+
+    public function profileUpdate(Request $request)
+    {
+        User::where('id', $request->id)->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'gender' => $request->gender,
+            'dob' => $request->dob,
+            'phone' => $request->phone
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'messages' => 'Profile updated successfully'
+        ]);
+    }
 
 
     public function logout()
